@@ -1,4 +1,5 @@
 DEPENDENCIES := react twitter
+NPM_DEPENDENCIES := grunt grunt-contrib-watch grunt-react
 
 run:
 	python -m SimpleHTTPServer
@@ -6,4 +7,5 @@ run:
 install:
 	$(foreach p,$(DEPENDENCIES),bower install $p;)
 	npm install -g react-tools
-	npm install grunt
+	$(foreach p,$(NPM_DEPENDENCIES),npm install $p;)
+
