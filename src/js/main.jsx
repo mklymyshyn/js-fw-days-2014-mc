@@ -25,4 +25,69 @@ var Ebay = {
   }
 }
 
-Ebay.search("apple").done(function (r){ console.log(r); })
+//Ebay.search("apple").done(function (r){ console.log(r); })
+var SearchResult = React.createClass({
+  render: function () {
+    var renderProduct = function (item) {
+      return (<div className="col-md-2">
+          <div className="thumbnail">
+            <div className="caption">
+              <h4>{item.title[0]}</h4>
+              <p><a href={item.viewItemURL[0]} target="_blank" className="btn btn-primary" role="button">Open</a></p>
+            </div>
+          </div>
+        </div>)
+    };
+
+    var items = this.props.data.findItemsAdvancedResponse[0].searchResult[0].item;
+    return (
+      <div className="row">
+      {items.map(renderProduct)}
+      </div>)
+  }
+});
+
+var Search = React.createClass({
+  getInitialState: function () {
+    return {data: {findItemsAdvancedResponse: [{"searchResult": [{item: []}]}]},
+            term: ""};
+  },
+  updateTerm: function (e) {
+    this.setState({term: e.target.value});
+  },
+  performSearch: function () {
+    var self = this;
+    Ebay.search(this.state.term).done(function (r){ 
+      self.setState({data: r})
+    });
+    return false;
+  },
+  render: function () {
+    return (
+      <div>
+      <nav className="navbar navbar-default" role="navigation">
+        <div className="container-fluid">
+          <div className="navbar-header">
+             <a className="navbar-brand" href="#">eBay Search</a>
+          </div>
+
+          <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <form className="navbar-form navbar-left" role="search">
+              <div className="form-group">
+                <input onChange={this.updateTerm} type="text" className="form-control" placeholder="Search" />
+              </div>
+              <button onClick={this.performSearch} className="btn btn-default">Submit</button>
+            </form>
+          </div>
+        </div>
+      </nav>
+      <SearchResult data={this.state.data} />
+      </div>
+    )
+  }
+});
+
+React.renderComponent(
+  <Search />,
+  document.getElementById('root-node')
+);
